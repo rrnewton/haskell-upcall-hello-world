@@ -8,19 +8,24 @@ extern void __stginit_Safe(void);
 #include <pthread.h>
 // #include <syscall.h> // Linux specific.
 
+// int reps = 100 * 1000 * 1000;
+int reps = 100 * 1000;
+
 void* child () {
-  int i;
+  int i, n;
   printf("On child thread, pthread %lu.  About to upcall.\n",
          (unsigned long)pthread_self());
   //  printf("lwp %d\n", syscall(SYS_gettid));
-  i = fibonacci_hs(42);
-  printf("Fibonacci: %d\n", i);
+  for(i=0; i<reps; i++)
+    n = fibonacci_hs(42);
+  printf("  Fibonacci, child: %d\n", n);
   print_numcaps();  
   pthread_exit(NULL);
 }
 
 int main(int argc, char *argv[])
 {
+    int i, n;
     hs_init(&argc, &argv);
 #ifdef __GLASGOW_HASKELL__
     hs_add_root(__stginit_Safe);
@@ -31,6 +36,9 @@ int main(int argc, char *argv[])
     pthread_t thread;
     pthread_create(& thread, NULL, child, NULL);
 
+    for(i=0; i<reps; i++)
+      n = fibonacci_hs(42);
+    printf("  Fibonacci, main: %d\n", n);
     void* retval;
     pthread_join(thread, &retval);
     
