@@ -1,0 +1,8 @@
+
+Call into Haskell from C.  Example from:
+
+   https://wiki.haskell.org/Calling_Haskell_from_C
+
+with some variations.
+
+
